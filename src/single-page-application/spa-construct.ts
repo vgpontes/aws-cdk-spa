@@ -1,7 +1,8 @@
 import { Stack } from 'aws-cdk-lib';
 import { Certificate } from 'aws-cdk-lib/aws-certificatemanager';
-import { Distribution as CloudfrontDistribution } from 'aws-cdk-lib/aws-cloudfront';
+import { CfnOriginAccessControl, Distribution as CloudfrontDistribution, ViewerProtocolPolicy } from 'aws-cdk-lib/aws-cloudfront';
 import { S3Origin } from 'aws-cdk-lib/aws-cloudfront-origins';
+import { Effect, PolicyStatement, ServicePrincipal } from 'aws-cdk-lib/aws-iam';
 import { LogGroup, RetentionDays } from 'aws-cdk-lib/aws-logs';
 import { BlockPublicAccess, Bucket, BucketAccessControl, BucketEncryption } from 'aws-cdk-lib/aws-s3';
 import { BucketDeployment, ServerSideEncryption, Source } from 'aws-cdk-lib/aws-s3-deployment';
@@ -62,7 +63,7 @@ export class SinglePageApplication extends Construct {
     if (props.domainName) {
       domains = [props.domainName];
       if (props.alternativeDomainNames) {
-        domains.concat(props.alternativeDomainNames);
+        domains = domains.concat(props.alternativeDomainNames);
       }
     }
 
@@ -78,8 +79,6 @@ export class SinglePageApplication extends Construct {
       accessControl: BucketAccessControl.PRIVATE,
       blockPublicAccess: BlockPublicAccess.BLOCK_ALL,
       encryption: BucketEncryption.S3_MANAGED,
-      websiteIndexDocument: websiteIndexDocument,
-      websiteErrorDocument: websiteErrorDocument,
       versioned: true,
     });
 
@@ -102,13 +101,51 @@ export class SinglePageApplication extends Construct {
       });
     }
 
-    new CloudfrontDistribution(this, `${applicationName}-distribution`, {
+    new CfnOriginAccessControl(this, `${applicationName}-oac`, {
+      originAccessControlConfig: {
+        name: `${applicationName}-oac`,
+        originAccessControlOriginType: 's3',
+        signingProtocol: 'sigv4',
+        signingBehavior: 'always',
+      },
+    });
+
+    const distribution = new CloudfrontDistribution(this, `${applicationName}-distribution`, {
       defaultBehavior: {
         origin: new S3Origin(bucket),
+        viewerProtocolPolicy: ViewerProtocolPolicy.REDIRECT_TO_HTTPS,
       },
       certificate: certificate,
       defaultRootObject: websiteIndexDocument,
       domainNames: domains ?? undefined,
+      errorResponses: [{
+        httpStatus: 404,
+        responsePagePath: websiteErrorDocument,
+      }],
     });
+
+    bucket.addToResourcePolicy(new PolicyStatement({
+      principals: [new ServicePrincipal('cloudfront.amazonaws.com')],
+      actions: ['s3:GetObject*'],
+      effect: Effect.ALLOW,
+      resources: [bucket.arnForObjects('*')],
+      conditions: {
+        StringEquals: {
+          'aws:SourceArn': `arn:aws:cloudfront::${accountId}:distribution/${distribution.distributionId}`,
+        },
+      },
+    }));
+
+    // bucket.addToResourcePolicy(new PolicyStatement({
+    //   principals: [new ServicePrincipal('cloudfront.amazonaws.com')],
+    //   actions: ['kms:Decrypt', 'kms:Encrypt', 'kms:GenerateDataKey*'],
+    //   effect: Effect.ALLOW,
+    //   resources: ['*'],
+    //   conditions: {
+    //     StringEquals: {
+    //       'aws:SourceArn': `arn:aws:cloudfront::${accountId}:distribution/${distribution.distributionId}`,
+    //     },
+    //   },
+    // }));
   }
 }
