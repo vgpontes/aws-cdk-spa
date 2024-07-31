@@ -1,9 +1,9 @@
 {
-  "name": "cdk-spa",
+  "name": "aws-cdk-spa",
   "description": "Construct to deploy a single-page-application using S3 and Cloudfront.",
   "repository": {
     "type": "git",
-    "url": "https://github.com/vgpontes/cdk-spa.git"
+    "url": "https://github.com/vgpontes/aws-cdk-spa.git"
   },
   "scripts": {
     "build": "npx projen build",
