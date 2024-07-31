@@ -60,7 +60,6 @@ test('Certificate created with all domains', () => {
     alternativeDomainNames: ['www.test.com'],
   });
   const template = Template.fromStack(stack);
-  console.log(JSON.stringify(template, null, 4));
 
   template.hasResourceProperties('AWS::CertificateManager::Certificate', {
     DomainName: 'test.com',
