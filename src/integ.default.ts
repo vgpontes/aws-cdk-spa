@@ -6,5 +6,5 @@ const stack = new cdk.Stack(app, 'MyStack');
 
 new SinglePageApplication(stack, 'website', {
   applicationName: 'vgpontes-website',
-  websiteDirectory: 'example',
+  websiteDirectory: 'example'
 });

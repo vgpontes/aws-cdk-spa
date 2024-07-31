@@ -1,6 +1,6 @@
 import { Stack } from 'aws-cdk-lib';
-import { Certificate } from 'aws-cdk-lib/aws-certificatemanager';
-import { CfnOriginAccessControl, Distribution as CloudfrontDistribution, ViewerProtocolPolicy } from 'aws-cdk-lib/aws-cloudfront';
+import { Certificate, CertificateValidation, KeyAlgorithm } from 'aws-cdk-lib/aws-certificatemanager';
+import { Distribution as CloudfrontDistribution, ViewerProtocolPolicy } from 'aws-cdk-lib/aws-cloudfront';
 import { S3Origin } from 'aws-cdk-lib/aws-cloudfront-origins';
 import { Effect, PolicyStatement, ServicePrincipal } from 'aws-cdk-lib/aws-iam';
 import { LogGroup, RetentionDays } from 'aws-cdk-lib/aws-logs';
@@ -98,17 +98,10 @@ export class SinglePageApplication extends Construct {
         domainName: props.domainName,
         certificateName: `${applicationName}-certificate`,
         subjectAlternativeNames: props.alternativeDomainNames,
+        validation: CertificateValidation.fromDns(),
+        keyAlgorithm: KeyAlgorithm.RSA_2048,
       });
     }
-
-    new CfnOriginAccessControl(this, `${applicationName}-oac`, {
-      originAccessControlConfig: {
-        name: `${applicationName}-oac`,
-        originAccessControlOriginType: 's3',
-        signingProtocol: 'sigv4',
-        signingBehavior: 'always',
-      },
-    });
 
     const distribution = new CloudfrontDistribution(this, `${applicationName}-distribution`, {
       defaultBehavior: {
@@ -135,17 +128,5 @@ export class SinglePageApplication extends Construct {
         },
       },
     }));
-
-    // bucket.addToResourcePolicy(new PolicyStatement({
-    //   principals: [new ServicePrincipal('cloudfront.amazonaws.com')],
-    //   actions: ['kms:Decrypt', 'kms:Encrypt', 'kms:GenerateDataKey*'],
-    //   effect: Effect.ALLOW,
-    //   resources: ['*'],
-    //   conditions: {
-    //     StringEquals: {
-    //       'aws:SourceArn': `arn:aws:cloudfront::${accountId}:distribution/${distribution.distributionId}`,
-    //     },
-    //   },
-    // }));
   }
 }

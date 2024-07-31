@@ -12,5 +12,6 @@ const project = new awscdk.AwsCdkConstructLibrary({
   description: 'Construct to deploy a single-page-application using S3 and Cloudfront.',
   bundledDeps: ['case'],
   gitignore: ['cdk.out'],
+  docgen: false,
 });
 project.synth();

@@ -45,6 +45,28 @@ test('Certificate created if domainName is provided', () => {
 
   template.hasResourceProperties('AWS::CertificateManager::Certificate', {
     DomainName: 'test.com',
+    KeyAlgorithm: 'RSA_2048',
+    ValidationMethod: 'DNS',
+  });
+});
+
+test('Certificate created with all domains', () => {
+  const app = new App();
+  const stack = new Stack(app);
+  new SinglePageApplication(stack, 'spa-doc-test', {
+    applicationName: 'testApp',
+    websiteDirectory: './test/test_website',
+    domainName: 'test.com',
+    alternativeDomainNames: ['www.test.com'],
+  });
+  const template = Template.fromStack(stack);
+  console.log(JSON.stringify(template, null, 4));
+
+  template.hasResourceProperties('AWS::CertificateManager::Certificate', {
+    DomainName: 'test.com',
+    SubjectAlternativeNames: ['www.test.com'],
+    KeyAlgorithm: 'RSA_2048',
+    ValidationMethod: 'DNS',
   });
 });
 
