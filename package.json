@@ -1,5 +1,5 @@
 {
-  "name": "aws-cdk-spa",
+  "name": "@vgpontes/aws-cdk-spa",
   "description": "Construct to deploy a single-page-application using S3 and Cloudfront.",
   "repository": {
     "type": "git",
@@ -72,9 +72,6 @@
   ],
   "main": "lib/index.js",
   "license": "Apache-2.0",
-  "publishConfig": {
-    "access": "public"
-  },
   "version": "0.0.0",
   "jest": {
     "coverageProvider": "v8",
