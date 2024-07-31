@@ -42,7 +42,7 @@ export interface SinglePageApplicationProps {
   readonly websiteIndexDocument?: string;
 
   /**
-   * The name of the error document (e.g. "404.html") for the website.
+   * The name of the error document (e.g. "404.html") for the website. If the error document is not in the root folder, include the folder name followed by a slash and the error document name. (e.g. "errors/404.html")
    *
    * @default - '404.html'
    */
@@ -113,7 +113,7 @@ export class SinglePageApplication extends Construct {
       domainNames: domains ?? undefined,
       errorResponses: [{
         httpStatus: 404,
-        responsePagePath: websiteErrorDocument,
+        responsePagePath: `/${websiteErrorDocument}`,
       }],
     });
 

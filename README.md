@@ -139,7 +139,7 @@ const singlePageApplicationProps: SinglePageApplicationProps = { ... }
 | <code><a href="#aws-cdk-spa.SinglePageApplicationProps.property.websiteDirectory">websiteDirectory</a></code> | <code>string</code> | Path to folder containing contents of single-page application. |
 | <code><a href="#aws-cdk-spa.SinglePageApplicationProps.property.alternativeDomainNames">alternativeDomainNames</a></code> | <code>string[]</code> | Alternative domain names on your certificate. |
 | <code><a href="#aws-cdk-spa.SinglePageApplicationProps.property.domainName">domainName</a></code> | <code>string</code> | Domain name for website. |
-| <code><a href="#aws-cdk-spa.SinglePageApplicationProps.property.websiteErrorDocument">websiteErrorDocument</a></code> | <code>string</code> | The name of the error document (e.g. "404.html") for the website. |
+| <code><a href="#aws-cdk-spa.SinglePageApplicationProps.property.websiteErrorDocument">websiteErrorDocument</a></code> | <code>string</code> | The name of the error document (e.g. "404.html") for the website. If the error document is not in the root folder, include the folder name followed by a slash and the error document name. (e.g. "errors/404.html"). |
 | <code><a href="#aws-cdk-spa.SinglePageApplicationProps.property.websiteIndexDocument">websiteIndexDocument</a></code> | <code>string</code> | The name of the index document (e.g. "index.html") for the website. |
 
 ---
@@ -203,7 +203,7 @@ public readonly websiteErrorDocument: string;
 - *Type:* string
 - *Default:* '404.html'
 
-The name of the error document (e.g. "404.html") for the website.
+The name of the error document (e.g. "404.html") for the website. If the error document is not in the root folder, include the folder name followed by a slash and the error document name. (e.g. "errors/404.html").
 
 ---
 

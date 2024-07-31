@@ -99,7 +99,7 @@ test('Cloudfront distribution is created', () => {
         {
           ErrorCode: 404,
           ResponseCode: 404,
-          ResponsePagePath: '404.html',
+          ResponsePagePath: '/404.html',
         },
       ],
     },
@@ -124,7 +124,7 @@ test('Cloudfront distribution is created with different index and error document
         {
           ErrorCode: 404,
           ResponseCode: 404,
-          ResponsePagePath: 'error.html',
+          ResponsePagePath: '/error.html',
         },
       ],
     },
